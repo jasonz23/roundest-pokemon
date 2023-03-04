@@ -6,7 +6,7 @@ import {
   getRandomBaseStatIndex,
   getRandomPokemon,
 } from "@/utils/pokemon";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Home() {
   const [ids, setIds] = useState(() => getOptionsForVote());
@@ -19,7 +19,6 @@ export default function Home() {
   const dataTwo = trpc.getPokemonByID.useQuery({ id: second });
   const pokemonOne = dataOne.data?.pokemon;
   const pokemonTwo = dataTwo.data?.pokemon;
-  console.log(pokemonOne, pokemonTwo);
 
   // TODO: replace any with actual type
   const sendVote = (selected: any, notSelected: any) => {
