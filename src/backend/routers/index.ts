@@ -12,7 +12,7 @@ export const appRouter = router({
       const api = new PokemonClient();
 
       const pokemon = await api.getPokemonById(input.id);
-      console.log(pokemon.stats);
+
       return {
         pokemon: {
           id: input.id,

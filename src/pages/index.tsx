@@ -23,7 +23,7 @@ export default function Home() {
   const pokemonTwo = dataTwo.data?.pokemon;
 
   // TODO: replace any with actual type
-  const sendVote = (index: number, selected: any, notSelected: any) => {
+  const sendVote = (index: number, selected: any, notSelected: any): void => {
     if (
       selected?.stats[baseStatIndex]?.base_stat >=
       notSelected?.stats[baseStatIndex]?.base_stat
@@ -53,12 +53,40 @@ export default function Home() {
   return (
     <>
       <ToastContainer />
-      <div className="h-screen w-screen flex flex-col justify-center items-center">
+      {(dataOne.isLoading || dataTwo.isLoading) && (
+        <div
+          style={{
+            position: "fixed",
+            zIndex: "500",
+            marginLeft: "45%",
+            marginTop: "43%",
+            width: "100%",
+          }}
+        >
+          <div className="lds-roller">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      )}
+      <div
+        className="h-screen w-screen flex flex-col justify-center items-center"
+        style={{
+          filter: dataOne.isLoading || dataTwo.isLoading ? "blur(8px)" : "",
+        }}
+      >
         <div className="text-2xl text-center mb-2">
           Which Pokemon has higher
-          <span className="capitalize">
-            {pokemonOne?.stats[baseStatIndex]?.stat?.name} ?
+          <span className="capitalize font-bold">
+            {" " + pokemonOne?.stats[baseStatIndex]?.stat?.name}
           </span>
+          ?
         </div>
         <div className="border rounded p-8 flex justify-between max-w-2xl item-center">
           <div className="w-64 h-64 bg-slate-300 flex flex-col items-center">
