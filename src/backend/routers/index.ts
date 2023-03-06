@@ -22,6 +22,33 @@ export const appRouter = router({
         }
       };
     }),
+  signIn: procedure
+  .input(
+    z.object({
+      id: z.number()
+    })
+  )
+  .query(async ({input}) => {
+
+  }),
+  signUp: procedure
+  .input(
+    z.object({
+      id: z.number()
+    })
+  )
+  .query(async ({input}) => {
+
+  }),
+  getHighestScoreFromUser: procedure
+    .input(
+      z.object({
+        id: z.number()
+      })
+    )
+    .query(async ({input}) => {
+
+    })
 });
 // export type definition of API
 export type AppRouter = typeof appRouter;
