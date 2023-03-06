@@ -114,9 +114,10 @@ export default function Home() {
           style={{
             position: "fixed",
             zIndex: "500",
-            marginLeft: "45%",
-            marginTop: "43%",
+            marginLeft: "47vw",
+            marginTop: "43vh",
             width: "100%",
+            height: "100%",
           }}
         >
           <div className="lds-roller">
