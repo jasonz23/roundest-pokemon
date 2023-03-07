@@ -257,7 +257,7 @@ export default function Home() {
           <div>
             Highest Score:
             {Object.keys(accountInfo).length == 0
-              ? "Please Sign In/ Up"
+              ? "Please Sign In"
               : accountInfo?.highestScore}
           </div>
         </div>
