@@ -21,15 +21,7 @@ export default function Home() {
   const [baseStatIndex, setBaseStatIndex] = useState(() =>
     getRandomBaseStatIndex()
   );
-  useEffect(() => {
-    console.log({
-      userName: (document.getElementById("user-name") as HTMLInputElement)
-        ?.value,
-      password: (document.getElementById("password") as HTMLInputElement)
-        ?.value,
-    });
-    console.log("mut", signInMutation.data);
-  });
+
   const [showModal, setShowModal] = useState(0);
   const [currScore, setCurrScore] = useState(0);
   const [accountInfo, setAccountInfo] = useState<any>({});
@@ -88,11 +80,6 @@ export default function Home() {
   };
 
   const signIn = async () => {
-    console.log("sign in", {
-      userName: (document.getElementById("user-name") as HTMLInputElement)
-        .value,
-      password: (document.getElementById("password") as HTMLInputElement).value,
-    });
     signInMutation.mutateAsync({
       userName: (document.getElementById("user-name") as HTMLInputElement)
         .value,
@@ -161,7 +148,7 @@ export default function Home() {
                 className="m-2 border-2 p-1 rounded-md"
                 onClick={() => openSignUpModal()}
               >
-                Sign Up
+                Create Account
               </button>
             </div>
           ) : (
@@ -278,7 +265,7 @@ export default function Home() {
               {/*header*/}
               <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
                 <h3 className="text-3xl font-semibold text-black">
-                  {showModal === 1 ? "Sign In" : "Sign Up"}
+                  {showModal === 1 ? "Sign In" : "Create Account"}
                 </h3>
                 <button
                   className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
