@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { procedure, router } from '../trpc';
 import { PokemonClient } from 'pokenode-ts';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 export const appRouter = router({
   getPokemonByID: procedure
     .input(
@@ -25,29 +28,72 @@ export const appRouter = router({
   signIn: procedure
   .input(
     z.object({
-      id: z.number()
+      userName: z.string(),
+      password: z.string()
     })
   )
-  .query(async ({input}) => {
-
+  .mutation(async ({input}) => {
+    const userExists = await prisma.user.findMany({
+      where: {userName: input.userName}
+    }).then(r => r.length == 0)
+    if (userExists) {
+      return {response: {success: false, error: "User does not Exist", data: {}}}
+    }
+    const users = await prisma.user.findFirst(
+      {where: {
+        userName: input.userName,
+        password: input.password
+    }}
+    )
+    console.log("users", users)
+    if (users === null)
+    {
+      return {response: {success: false, data: users, error:"Wrong User Name or Password"}};
+    }
+    return {response: {success: true, data: users, error:""}};
   }),
   signUp: procedure
   .input(
     z.object({
-      id: z.number()
+      userName: z.string(),
+      password: z.string()
     })
   )
-  .query(async ({input}) => {
+  .mutation(async ({input}) => {
+    const userExists = await prisma.user.findMany({
+      where: {userName: input.userName}
+    }).then(r => r.length > 0)
+    if (userExists) {
+      return {response: {success: false, error: "User Already Exists", data: {}}}
+    }
+    await prisma.user.create({
+      data : {
+        userName: input.userName,
+        password: input.password,
+        highestScore: 0
+      }
+    });
+    return {response: {success: true, data: {userName: input.userName, password: input.password, highestScore: 0}}}
 
   }),
-  getHighestScoreFromUser: procedure
+  updateHighestScore: procedure
     .input(
       z.object({
-        id: z.number()
+        userName: z.string(),
+        highestScore: z.number()
       })
     )
-    .query(async ({input}) => {
-
+    .mutation(async ({input}) => {
+      const user = await prisma.user.updateMany({
+        where: {
+          userName: input.userName
+        },
+        data: {
+          highestScore: input.highestScore
+        }
+      })
+      console.log("update", user)
+      return {response: {success: true, data: user, error:""}}
     })
 });
 // export type definition of API

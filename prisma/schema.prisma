@@ -3,16 +3,18 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
 }
 
 model User {
   id           String @id @default (cuid())
-  userName     String
+  userName     String @unique
   password     String
   highestScore Int    @default(0)
 }

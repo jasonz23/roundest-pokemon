@@ -8,19 +8,25 @@ import {
 } from "@/utils/pokemon";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useWindowSize from "@rooks/use-window-size";
+import { sign } from "crypto";
 
 export default function Home() {
   const { innerWidth } = useWindowSize();
+  const updateHighestVoteMutation = trpc.updateHighestScore.useMutation();
+  const signInMutation = trpc.signIn.useMutation();
+  const signUpMutation = trpc.signUp.useMutation();
   const [ids, setIds] = useState(() => getOptionsForVote());
   const [baseStatIndex, setBaseStatIndex] = useState(() =>
     getRandomBaseStatIndex()
   );
+  useEffect(() => {
+    console.log("render");
+  });
   const [showModal, setShowModal] = useState(0);
   const [currScore, setCurrScore] = useState(0);
-  const [accountInfo, setAccountIndo] = useState({});
-
+  const [accountInfo, setAccountInfo] = useState<any>({});
   const [first, second] = ids;
   const dataOne = trpc.getPokemonByID.useQuery({ id: first });
   const dataTwo = trpc.getPokemonByID.useQuery({ id: second });
@@ -40,7 +46,7 @@ export default function Home() {
       }
       setCurrScore(currScore + 1);
     } else {
-      toast("Wrong", {
+      toast.info("Wrong", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -50,6 +56,15 @@ export default function Home() {
         progress: undefined,
         theme: "light",
       });
+      if (Object.keys(accountInfo).length != 0) {
+        if (accountInfo.highestScore < currScore) {
+          updateHighestVoteMutation.mutate({
+            userName: accountInfo?.userName ?? "null",
+            highestScore: currScore,
+          });
+          accountInfo.highestScore = currScore;
+        }
+      }
       setTimeout(() => {
         setIds(getOptionsForVote());
         setBaseStatIndex(getRandomBaseStatIndex());
@@ -68,17 +83,61 @@ export default function Home() {
     setShowModal(2);
   };
 
-  const signIn = () => {};
+  const signIn = async () => {
+    signInMutation.mutateAsync({
+      userName: (document.getElementById("user-name") as HTMLInputElement)
+        .value,
+      password: (document.getElementById("password") as HTMLInputElement).value,
+    });
 
-  const signUp = () => {};
+    if (signInMutation.isSuccess) {
+      if (signInMutation.data?.response?.success) {
+        (document.getElementById("user-name") as HTMLInputElement).value = "";
+        (document.getElementById("password") as HTMLInputElement).value = "";
+        setShowModal(0);
+        console.log(signInMutation.data?.response?.data ?? {});
+        setAccountInfo(signInMutation.data?.response?.data ?? {});
+        toast.success("Signed In");
+      } else {
+        toast.error(
+          signInMutation.data?.response?.error ?? "User does not Exist"
+        );
+      }
+    } else {
+      toast.error("Interal Error 500: please retry again");
+    }
+  };
 
-  const signOut = () => {};
+  const signUp = () => {
+    signUpMutation.mutateAsync({
+      userName: (document.getElementById("user-name") as HTMLInputElement)
+        .value,
+      password: (document.getElementById("password") as HTMLInputElement).value,
+    });
+    toast.success("Account Created");
+    setShowModal(0);
+    // TODO :fix it
+    // const success = signUpMutation.data?.response?.success ?? false;
+    // console.log("signup", signUpMutation);
+    // if (signUpMutation.isSuccess) {
+    //   setShowModal(0);
+    //   console.log("res", signUpMutation.data?.response?.data ?? {});
+    //   setAccountInfo(signUpMutation.data?.response?.data ?? {});
+    // } else {
+    //   //
+    // }
+  };
+
+  const signOut = () => {
+    setAccountInfo({});
+    toast.success("Signed Out");
+  };
 
   return (
     <>
       <div
         className="w-screen h-20 flex flex-row justify-between"
-        style={{ position: "absolute", filter: showModal ? "blur(8px)" : "" }}
+        style={{ position: "absolute" }}
       >
         <div className="m-2 p-1 font-bold text-2xl">Pokemon Compare Game</div>
         <div>
@@ -162,6 +221,7 @@ export default function Home() {
             <button
               className="w-full h-full"
               onClick={() => sendVote(0, pokemonOne, pokemonTwo)}
+              disabled={dataOne.isLoading}
             >
               {!dataOne.isLoading && (
                 <img
@@ -179,6 +239,7 @@ export default function Home() {
             <button
               className="w-full h-full"
               onClick={() => sendVote(1, pokemonTwo, pokemonOne)}
+              disabled={dataTwo.isLoading}
             >
               {!dataTwo.isLoading && (
                 <img
@@ -194,8 +255,10 @@ export default function Home() {
         <div className="flex justify-between p-8" style={{ width: "42rem" }}>
           <div>Current Score: {currScore}</div>
           <div>
-            Highest Score:{" "}
-            {Object.keys(accountInfo).length == 0 ? "Please Sign In/ Up" : "27"}
+            Highest Score:
+            {Object.keys(accountInfo).length == 0
+              ? "Please Sign In/ Up"
+              : accountInfo?.highestScore}
           </div>
         </div>
       </div>
@@ -225,13 +288,19 @@ export default function Home() {
                   <label className="block mb-2 text-sm font-medium text-black">
                     User Name
                   </label>
-                  <input className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                  <input
+                    id="user-name"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  />
                 </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-black">
                     Password
                   </label>
-                  <input className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                  <input
+                    id="password"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  />
                 </div>
               </div>
               {/*footer*/}
@@ -250,11 +319,9 @@ export default function Home() {
                     showModal === 1
                       ? () => {
                           signIn();
-                          setShowModal(0);
                         }
                       : () => {
                           signUp();
-                          setShowModal(0);
                         }
                   }
                 >
