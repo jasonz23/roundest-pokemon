@@ -45,7 +45,6 @@ export const appRouter = router({
         password: input.password
     }}
     )
-    console.log("users", users)
     if (users === null)
     {
       return {response: {success: false, data: users, error:"Wrong User Name or Password"}};
@@ -92,7 +91,6 @@ export const appRouter = router({
           highestScore: input.highestScore
         }
       })
-      console.log("update", user)
       return {response: {success: true, data: user, error:""}}
     })
 });

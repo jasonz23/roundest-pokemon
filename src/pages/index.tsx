@@ -22,7 +22,13 @@ export default function Home() {
     getRandomBaseStatIndex()
   );
   useEffect(() => {
-    console.log("render");
+    console.log({
+      userName: (document.getElementById("user-name") as HTMLInputElement)
+        ?.value,
+      password: (document.getElementById("password") as HTMLInputElement)
+        ?.value,
+    });
+    console.log("mut", signInMutation.data);
   });
   const [showModal, setShowModal] = useState(0);
   const [currScore, setCurrScore] = useState(0);
@@ -74,16 +80,19 @@ export default function Home() {
   };
 
   const openSignInModal = () => {
-    console.log("open sign in modal");
     setShowModal(1);
   };
 
   const openSignUpModal = () => {
-    console.log("open sign up modal");
     setShowModal(2);
   };
 
   const signIn = async () => {
+    console.log("sign in", {
+      userName: (document.getElementById("user-name") as HTMLInputElement)
+        .value,
+      password: (document.getElementById("password") as HTMLInputElement).value,
+    });
     signInMutation.mutateAsync({
       userName: (document.getElementById("user-name") as HTMLInputElement)
         .value,
@@ -94,10 +103,10 @@ export default function Home() {
       if (signInMutation.data?.response?.success) {
         (document.getElementById("user-name") as HTMLInputElement).value = "";
         (document.getElementById("password") as HTMLInputElement).value = "";
-        setShowModal(0);
-        console.log(signInMutation.data?.response?.data ?? {});
         setAccountInfo(signInMutation.data?.response?.data ?? {});
+        setShowModal(0);
         toast.success("Signed In");
+        signInMutation.reset();
       } else {
         toast.error(
           signInMutation.data?.response?.error ?? "User does not Exist"
@@ -118,10 +127,8 @@ export default function Home() {
     setShowModal(0);
     // TODO :fix it
     // const success = signUpMutation.data?.response?.success ?? false;
-    // console.log("signup", signUpMutation);
     // if (signUpMutation.isSuccess) {
     //   setShowModal(0);
-    //   console.log("res", signUpMutation.data?.response?.data ?? {});
     //   setAccountInfo(signUpMutation.data?.response?.data ?? {});
     // } else {
     //   //
