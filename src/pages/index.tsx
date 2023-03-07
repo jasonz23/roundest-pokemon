@@ -130,22 +130,26 @@ export default function Home() {
   return (
     <>
       <div
-        className="w-screen h-20 flex flex-row justify-between"
-        style={{ position: "absolute" }}
+        className="w-screen h-20 flex flex-row justify-between "
+        style={{ position: "absolute", top: 0 }}
       >
-        <div className="m-2 p-1 font-bold text-2xl">Pokemon Compare Game</div>
+        <div className="m-2 p-1 font-bold text-sm sm:text-2xl">
+          Pokemon Compare Game
+        </div>
         <div>
           {Object.keys(accountInfo).length == 0 ? (
             <div className="flex items-center">
-              <div>Continuing Playing as Guest?</div>
+              <div className="hidden sm:block">
+                Continuing Playing as Guest?
+              </div>
               <button
-                className="m-2 border-2 p-1 rounded-md"
+                className="m-2 border-2 p-1 rounded-md text-sm sm:text-lg"
                 onClick={() => openSignInModal()}
               >
                 Sign In
               </button>
               <button
-                className="m-2 border-2 p-1 rounded-md"
+                className="m-2 border-2 p-1 rounded-md text-sm sm:text-lg"
                 onClick={() => openSignUpModal()}
               >
                 Create Account
@@ -186,7 +190,7 @@ export default function Home() {
         </div>
       )}
       <div
-        className="h-screen w-screen flex flex-col justify-center items-center"
+        className="h-screen w-screen flex flex-col justify-center items-center mt-20 pt-12 sm:mt-0 sm:pt-0"
         style={{
           filter:
             dataOne.isLoading || dataTwo.isLoading || showModal
@@ -194,7 +198,7 @@ export default function Home() {
               : "",
         }}
       >
-        <div className="text-2xl text-center mb-2">
+        <div className="text-2xl text-center mb-2 mt-20">
           Which Pokemon has higher
           <span className="capitalize font-bold">
             {" " +
@@ -202,15 +206,7 @@ export default function Home() {
           </span>
           ?
         </div>
-        <div
-          className="border rounded p-8 flex justify-between max-w-2xl item-center"
-          style={
-            {
-              //implement for mobile
-              // flexDirection: innerWidth ?? 0 < 600 ? "column" : "row",
-            }
-          }
-        >
+        <div className="border rounded p-8 flex flex-col justify-between max-w-2xl item-center sm:flex-row">
           <div className="w-64 h-64 bg-slate-300 flex flex-col items-center">
             <button
               className="w-full h-full"
@@ -228,7 +224,7 @@ export default function Home() {
 
             <div className="capitalize">{pokemonOne?.name}</div>
           </div>
-          <div className="px-8 self-center">OR</div>
+          <div className="px-8 self-center mt-6 sm:mt-0">OR</div>
           <div className="w-64 h-64 bg-slate-300 flex flex-col items-center">
             <button
               className="w-full h-full"
@@ -246,7 +242,7 @@ export default function Home() {
             <div className="capitalize">{pokemonTwo?.name}</div>
           </div>
         </div>
-        <div className="flex justify-between p-8" style={{ width: "42rem" }}>
+        <div className="flex justify-between p-8 sm:w-[42rem]">
           <div>Current Score: {currScore}</div>
           <div>
             Highest Score:
