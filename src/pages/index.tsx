@@ -242,7 +242,7 @@ export default function Home() {
             <div className="capitalize">{pokemonTwo?.name}</div>
           </div>
         </div>
-        <div className="flex justify-between p-8 sm:w-[42rem]">
+        <div className="flex justify-between flex-col sm:flex-row p-4 sm:p-8 sm:w-[42rem]">
           <div>Current Score: {currScore}</div>
           <div>
             Highest Score:
