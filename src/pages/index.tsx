@@ -37,11 +37,8 @@ export default function Home() {
       selected?.stats[baseStatIndex]?.base_stat >=
       notSelected?.stats[baseStatIndex]?.base_stat
     ) {
-      if (index === 0) {
-        setIds([selected?.id, getRandomPokemon(notSelected?.id)]);
-      } else {
-        setIds([getRandomPokemon(notSelected?.id), selected?.id]);
-      }
+      const [first, second] = getOptionsForVote();
+      setIds([first, second]);
       setCurrScore(currScore + 1);
     } else {
       toast.info("Wrong", {
